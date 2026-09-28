@@ -389,11 +389,11 @@ def try_render(pages, out, timeout=15):
                     pg.goto(p["final_url"] or p["url"], timeout=timeout * 1000,
                             wait_until="networkidle")
                     html = pg.content()
-                    with open(os.path.join(out, "pages", p["id"] + ".rendered.html"), "w") as fh:
+                    with open(os.path.join(out, "pages", p["id"] + ".rendered.html"), "w", encoding="utf-8", errors="replace") as fh:
                         fh.write(html)
                     ex = htmlx.extract(html, p["final_url"] or p["url"])
                     ex["jsonld_types"] = _jsonld_types(ex["jsonld_raw"])
-                    with open(os.path.join(out, "pages", p["id"] + ".rendered.extract.json"), "w") as fh:
+                    with open(os.path.join(out, "pages", p["id"] + ".rendered.extract.json"), "w", encoding="utf-8") as fh:
                         json.dump(ex, fh)
                     result[p["id"]] = {"ok": True, "word_count": ex["word_count"],
                                        "jsonld_blocks": len(ex["jsonld_raw"]),
@@ -441,7 +441,7 @@ def crawl(seed, out, max_pages=30, delay=1.0, timeout=15, budget_s=210, render="
             for a in AI_AGENTS_RETRIEVAL + AI_AGENTS_TRAINING
         },
     }
-    with open(os.path.join(out, "robots.json"), "w") as fh:
+    with open(os.path.join(out, "robots.json"), "w", encoding="utf-8") as fh:
         json.dump(robots, fh, indent=1)
 
     def allowed(u):
@@ -488,7 +488,7 @@ def crawl(seed, out, max_pages=30, delay=1.0, timeout=15, budget_s=210, render="
             sm["urls"].extend(urls[:800])
         time.sleep(delay)
     sm["total_urls"] = len(sm["urls"])
-    with open(os.path.join(out, "sitemap.json"), "w") as fh:
+    with open(os.path.join(out, "sitemap.json"), "w", encoding="utf-8") as fh:
         json.dump(sm, fh, indent=1)
 
     # -- probes ------------------------------------------------------------
@@ -581,13 +581,13 @@ def crawl(seed, out, max_pages=30, delay=1.0, timeout=15, budget_s=210, render="
                 "server", "vary", "last-modified", "content-security-policy")},
         }
         if is_html and rec["body"]:
-            with open(os.path.join(out, "pages", pid + ".html"), "w") as fh:
+            with open(os.path.join(out, "pages", pid + ".html"), "w", encoding="utf-8", errors="replace") as fh:
                 fh.write(rec["body"])
             ex = htmlx.extract(rec["body"], rec["final_url"] or url)
             ex["jsonld_types"] = _jsonld_types(ex["jsonld_raw"])
             ex["raw_text_len"] = len(htmlx.strip_tags(rec["body"]))
             page["type"] = page_type(url, ex)
-            with open(os.path.join(out, "pages", pid + ".extract.json"), "w") as fh:
+            with open(os.path.join(out, "pages", pid + ".extract.json"), "w", encoding="utf-8") as fh:
                 json.dump(ex, fh)
             page.update(word_count=ex["word_count"], title=ex["title"],
                         h1_count=len(ex["h1s"]), jsonld_blocks=len(ex["jsonld_raw"]))
@@ -632,9 +632,9 @@ def crawl(seed, out, max_pages=30, delay=1.0, timeout=15, budget_s=210, render="
         "elapsed_s": round(time.time() - started, 1),
         "notes": notes,
     }
-    with open(os.path.join(out, "meta.json"), "w") as fh:
+    with open(os.path.join(out, "meta.json"), "w", encoding="utf-8") as fh:
         json.dump(meta, fh, indent=1)
-    with open(os.path.join(out, "index.json"), "w") as fh:
+    with open(os.path.join(out, "index.json"), "w", encoding="utf-8") as fh:
         json.dump({"pages": pages, "rendered": rendered["pages"]}, fh, indent=1)
     return meta
 
