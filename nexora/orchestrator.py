@@ -62,14 +62,14 @@ class NexoraOrchestrator:
             print(f"\n=======================================================", file=sys.stderr)
             print(f"Nexora AI — AI Visibility & Citation Optimization Agent", file=sys.stderr)
             print(f"Auditing: {url} (Domain: {identity.domain})", file=sys.stderr)
-            print(f"Memory Bank: {identity.bank_id} | Hindsight: {'LIVE' if self.memory_agent.client.is_live else 'OFFLINE (Local Snapshot Cache)'}", file=sys.stderr)
+            print(f"Memory Bank: {identity.bank_id} | Hindsight: {'CONNECTED' if self.memory_agent.client.is_live else 'OFFLINE (Local Snapshot Cache)'}", file=sys.stderr)
             print(f"=======================================================\n", file=sys.stderr)
 
         # ---------------------------------------------------------
         # Phase 1: Pre-Audit Memory Recall
         # ---------------------------------------------------------
         if not quiet:
-            print("[Stage 1/5] Recalling historical memory from Hindsight...", file=sys.stderr)
+            print("[Stage 1/5] Loading historical memory...", file=sys.stderr)
 
         history_context = {"is_first_audit": True, "snapshots": [], "events": []}
         if enable_history:
@@ -167,10 +167,15 @@ class NexoraOrchestrator:
         # ---------------------------------------------------------
         if enable_history:
             if not quiet:
-                print("\n[Stage 5/5] Retaining audit outcomes in Hindsight memory...", file=sys.stderr)
-            self.memory_agent.retain_audit(identity, curr_snapshot, comparison)
+                print("\n[Stage 5/5] Retaining audit outcomes...", file=sys.stderr)
+            hindsight_retained = self.memory_agent.retain_audit(identity, curr_snapshot, comparison)
             if not quiet:
-                print(f"  → Durable audit knowledge stored for {identity.domain}.", file=sys.stderr)
+                if hindsight_retained:
+                    print(f"  → Audit outcome confirmed in Hindsight for {identity.domain}.", file=sys.stderr)
+                else:
+                    print(f"  → Hindsight write not confirmed; audit snapshot saved to local cache only for {identity.domain}.", file=sys.stderr)
+        else:
+            hindsight_retained = None
 
         elapsed = round(time.time() - t0, 1)
         if not quiet:
@@ -186,6 +191,8 @@ class NexoraOrchestrator:
             "persistent_count": len(comparison.persistent_findings),
             "regressed_count": len(comparison.regressed_findings),
             "new_count": len(comparison.new_findings),
+            "hindsight_connected": self.memory_agent.client.is_live,
+            "hindsight_retained": hindsight_retained,
             "memory_priority": rec_aug.get("memory_priority_headline", ""),
             "report_json": report_json_path,
             "report_markdown": report_md_path,
