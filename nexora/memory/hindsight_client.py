@@ -18,6 +18,11 @@ except ImportError:
     Hindsight = None
     HINDSIGHT_INSTALLED = False
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
 logger = logging.getLogger("nexora.memory")
 
 
@@ -30,6 +35,13 @@ class HindsightMemoryClient:
         api_key: Optional[str] = None,
         storage_dir: Optional[str] = None,
     ):
+        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        dotenv_path = os.path.join(repo_root, ".env")
+        if load_dotenv:
+            load_dotenv(dotenv_path=dotenv_path, override=False)
+        elif os.path.isfile(dotenv_path):
+            logger.warning(".env exists but python-dotenv is not installed; Hindsight settings were not loaded.")
+
         self.base_url = base_url or os.getenv("HINDSIGHT_BASE_URL", "http://localhost:8888")
         self.api_key = api_key or os.getenv("HINDSIGHT_API_KEY", None)
         self.storage_dir = storage_dir or os.path.join(os.getcwd(), ".nexora")
@@ -44,7 +56,7 @@ class HindsightMemoryClient:
     def _init_client(self):
         """Attempt to instantiate the official Hindsight client and test connectivity."""
         if not HINDSIGHT_INSTALLED:
-            logger.info("hindsight-client is not installed; operating in local snapshot mode.")
+            logger.warning("hindsight-client is not installed; operating in local snapshot mode.")
             self._is_available = False
             return
 
@@ -61,14 +73,17 @@ class HindsightMemoryClient:
                 ver = self._client.get_version()
                 self._is_available = True
                 logger.info("Connected to Hindsight server at %s (version: %s)", self.base_url, ver)
-            except Exception:
-                # If get_version fails (e.g. server offline), check if API key exists for cloud
-                if self.api_key and "api.hindsight.vectorize.io" in self.base_url:
-                    self._is_available = True
-                else:
-                    self._is_available = False
-                    self.close()
-                    logger.debug("Hindsight server at %s unreachable; offline fallback active.", self.base_url)
+            except Exception as e:
+                self._is_available = False
+                self.close()
+                key_status = "set" if self.api_key else "unset"
+                logger.warning(
+                    "Hindsight health check failed at %s (%s; HINDSIGHT_API_KEY is %s); "
+                    "local snapshot mode active.",
+                    self.base_url,
+                    type(e).__name__,
+                    key_status,
+                )
         except Exception as e:
             logger.debug("Failed initializing Hindsight client: %s; using local snapshots.", e)
             self._is_available = False
