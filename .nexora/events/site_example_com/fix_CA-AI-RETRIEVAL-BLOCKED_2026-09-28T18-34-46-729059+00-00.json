@@ -1,9 +1,0 @@
-{
-  "event_id": "fix_CA-AI-RETRIEVAL-BLOCKED_2026-09-28T18-34-46-729059+00-00",
-  "domain": "example.com",
-  "check_id": "CA-AI-RETRIEVAL-BLOCKED",
-  "recorded_at": "2026-09-28T18:34:46.729059+00:00",
-  "status": "user_confirmed",
-  "notes": "Allowed OAI-SearchBot and Claude-SearchBot in robots.txt.",
-  "suggested_action_summary": "Updated robots.txt policy"
-}

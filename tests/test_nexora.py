@@ -62,7 +62,7 @@ class TestNexoraIdentity(unittest.TestCase):
 
 
 class TestNexoraScenarios(unittest.TestCase):
-    """Test required hackathon scenarios A through G."""
+    """Test core longitudinal audit scenarios A through G."""
 
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(prefix="nexora_unit_")

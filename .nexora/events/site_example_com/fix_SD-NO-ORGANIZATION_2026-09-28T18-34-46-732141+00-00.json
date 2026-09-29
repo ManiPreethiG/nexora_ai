@@ -1,9 +1,0 @@
-{
-  "event_id": "fix_SD-NO-ORGANIZATION_2026-09-28T18-34-46-732141+00-00",
-  "domain": "example.com",
-  "check_id": "SD-NO-ORGANIZATION",
-  "recorded_at": "2026-09-28T18:34:46.732141+00:00",
-  "status": "user_confirmed",
-  "notes": "Added Organization markup with sameAs anchors.",
-  "suggested_action_summary": "Implemented Organization schema"
-}

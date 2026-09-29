@@ -1,7 +1,7 @@
 {
-  "name": "brand-ai-readiness-audit",
+  "name": "nexora-ai",
   "version": "1.0.0",
-  "description": "Nexora AI: Audits any website for the problems that stop AI assistants finding, reading, trusting and citing it, and leverages Hindsight persistent memory to track changes, detect regressions, and optimize citation visibility over time. Read-only.",
+  "description": "Nexora AI: Autonomous SEO & Citation Optimization Agent with persistent memory powered by Hindsight. Audits websites across 10 AI-readiness dimensions, tracks optimizations, verifies defect remediation, and catches regressions over time.",
   "license": "MIT",
   "entrypoint": "audit-orchestrator",
   "skills": [

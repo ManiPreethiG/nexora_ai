@@ -1,4 +1,4 @@
-"""Multi-Cycle Demo Runner for Nexora AI Hackathon Showcase.
+"""Multi-Cycle Simulation Runner for Nexora AI.
 
 Demonstrates the central learning loop of Nexora AI:
   Audit 1 (Baseline: 51 pts, 4 major defects)
@@ -46,7 +46,7 @@ def run_demo(target_url: str = "https://example.com") -> int:
 
     print("\n" + "=" * 70)
     print("NEXORA AI — AI VISIBILITY & CITATION OPTIMIZATION AGENT")
-    print("Hackathon Demo: Persistent Memory & Learning Across Audit Cycles")
+    print("Simulation: Persistent Memory & Learning Across Audit Cycles")
     print(f"Target Site: {identity.domain} | Memory Bank: {identity.bank_id}")
     print("=" * 70)
 
